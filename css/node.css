@@ -1,0 +1,33 @@
+#tree {
+    margin-top: 20px;
+}
+
+#tree .node-container {
+    background-color: red;
+    margin: auto;
+    display: block;
+    align-items: center;
+}
+
+#tree .node-container .arrow-l {
+    width: 50px;
+}
+
+#tree .node-container .node {
+    border: 1px solid black;
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    border-radius: 50%;
+    margin: auto;
+}
+
+#tree .node-container .node:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+}
+
+#tree .node-container .node p {
+    font-size: larger;
+    margin: auto;
+}

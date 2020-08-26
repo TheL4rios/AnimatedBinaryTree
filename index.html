@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+    <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>Binary Tree</title>
+            <link rel="icon" href="img/icons/tree.svg">
+            <link rel="stylesheet" href="css/menu.css">
+            <link rel="stylesheet" href="css/node.css">
+        </head>
+        <body>
+            <section>
+                <div id="data">
+                    <div class="input">
+                        <input id="txtInsert" type="text" placeholder="Agregar un número">
+                        <div id="insert">
+                            <img src="img/icons/add.svg" alt="x">
+                        </div>
+                    </div>
+    
+                    <div class="input">
+                        <input id="txtRemove" type="text" placeholder="Eliminar un número">
+                        <div id="remove">
+                            <img src="img/icons/remove.svg" alt="x">
+                        </div>
+                    </div>
+    
+                    <div class="input">
+                        <input id="txtSearch" type="text" placeholder="Buscar un número">
+                        <div id="search">
+                            <img src="img/icons/search.svg" alt="x">
+                        </div>
+                    </div>
+    
+                    <div id="trail">
+                        <span><img src="img/icons/tree.svg" alt="x"> Recorrer árbol en:</span>
+                        <div>
+                            <button>PreOrden</button>
+                            <button>InOrden</button>
+                            <button>PostOrden</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="theme">
+                    <img src="img/icons/theme.svg" alt="x">
+                </div>
+            </section>
+            <div id="tree">
+                <div class="node-container">
+                    <div class="node">
+                        <p>5</p>
+                    </div>
+                    <img class="arrow-l" src="img/arrow.png">
+                </div>
+            </div>
+
+            <script src="js/Node.js"></script>
+            <script src="js/BinaryTree.js"></script>
+            <script src="js/Error.js"></script>
+            <script src="js/Index.js"></script>
+        </body>
+    </html>

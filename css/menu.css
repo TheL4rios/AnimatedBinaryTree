@@ -1,0 +1,86 @@
+* {
+    padding: 0px;
+    margin: 0px;
+}
+
+section {
+    background-color: #0f3460;
+    display: flex;
+    height: 60px;
+}
+
+section #data {
+    display: flex;
+    margin-left: 10px;
+}
+
+section #data .input input {
+    border: 1px solid black;
+    border-radius: 25px 0px 0px 25px;
+    height: 53.5%;
+    padding: 5px;
+    padding-left: 15px;
+    border-right: 0px;
+    font-size: medium;
+}
+
+section #data .input div {
+    padding: 5px;
+    margin-right: 10px;
+    height: 53.5%;
+    display: flex;
+    align-items: center;
+    border-radius: 0px 25px 25px 0px;
+    border: 1px solid black;
+    border-left: 0px;
+    background-color: white;
+}
+
+section #data .input div:hover {
+    cursor: pointer;
+}
+
+section #data .input div img {
+    width: 20px;
+}
+
+section #data .input {
+    display: flex;
+    align-items: center;
+}
+
+/* --- trail --- */
+section #data #trail {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+}
+
+section #data #trail span {
+    margin-right: 10px;
+    color: white;
+}
+
+section #data #trail span img {
+    width: 20px;
+}
+
+section #data #trail div button {
+    background-color: rgba(0, 0, 0, 0);
+    color: white;
+    padding: 10px;
+}
+
+section #data #trail div button:hover {
+    background-color: rgba(0, 0, 0, 0.5);
+    cursor: pointer;
+}
+
+/* --- theme --- */
+section #theme {
+    margin: auto;
+}
+
+section #theme img:hover {
+    cursor: pointer;
+}
