@@ -2,17 +2,6 @@
     margin-top: 20px;
 }
 
-#tree .node-container {
-    background-color: red;
-    margin: auto;
-    display: block;
-    align-items: center;
-}
-
-#tree .node-container .arrow-l {
-    width: 50px;
-}
-
 #tree .node-container .node {
     border: 1px solid black;
     width: 50px;
@@ -21,6 +10,7 @@
     align-items: center;
     border-radius: 50%;
     margin: auto;
+    position: absolute;
 }
 
 #tree .node-container .node:hover {
