@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.getElementById('insert').addEventListener('click', () => {
         const txtInsert = document.getElementById('txtInsert');
-        const value = txtInsert.value;
+        const value = parseInt(txtInsert.value);
         const validate = isValid(txtInsert, value);
 
         if (validate) {
