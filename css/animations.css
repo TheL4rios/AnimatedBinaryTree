@@ -1,0 +1,21 @@
+@keyframes appear {
+    10% { transform: scale(0); }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); } 
+}
+
+@keyframes rotate {
+    20% { transform: scale(0); }
+    40% { transform: scale(1.2); }
+    60% { transform: scale(1); } 
+    70% { transform: rotateY(40deg); }
+    80% { transform: rotateY(80deg); }
+    90% { transform: rotateY(120deg); }
+    100% { transform: rotateY(180deg); }
+}
+
+@keyframes select {
+    10% { transform: scale(1); }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(1); } 
+}

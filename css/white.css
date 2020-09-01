@@ -1,0 +1,16 @@
+body {
+    background-color: white;
+}
+
+#tree .node-container .node {
+    color: black;
+    border: 1px solid black;
+}
+
+.arrow-container .line {
+    border-color: black;
+}
+
+.arrow-container .arrow {
+    border-left: 10px solid black;
+}

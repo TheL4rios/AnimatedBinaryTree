@@ -1,0 +1,16 @@
+body {
+    background-color: #252525;
+}
+
+#tree .node-container .node {
+    color: white;
+    border: 1px solid white;
+}
+
+.arrow-container .line {
+    border-color: white;
+}
+
+.arrow-container .arrow {
+    border-left: 10px solid white;
+}
