@@ -24,12 +24,13 @@ class DrawArrow {
         arrowContainer.appendChild(arrow);
         document.getElementById('tree').appendChild(arrowContainer);
 
-        await this.adjustArrow(document.getElementById(this.id));
+        await this.adjustArrow();
     }
 
-    async adjustArrow(arrow) {
+    async adjustArrow() {
         const from = this.from;
-        const arrowPosition = arrow.getBoundingClientRect();
+        const arrow = document.getElementById(this.id);
+        const arrowPosition = document.getElementById(this.id).getBoundingClientRect();
 
         if (this.position === this.LEFT) {
             arrow.style.top = (from.bottom - 10) + 'px';

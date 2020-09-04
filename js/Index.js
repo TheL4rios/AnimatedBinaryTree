@@ -23,23 +23,25 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    function remove() {
+    async function remove() {
         const txtRemove = document.getElementById('txtRemove');
-        const value = txtRemove.value;
+        const value = parseInt(txtRemove.value);
         const validate = isValid(txtRemove, value);
 
         if (validate) {
             validate.hideError();
+            txtRemove.value = '';
+            await tree.remove(value);
         }
     }
 
-    document.getElementById('remove').addEventListener('click', () => {
-        remove();
+    document.getElementById('remove').addEventListener('click', async () => {
+        await remove();
     });
 
-    document.getElementById('txtRemove').addEventListener('keyup', (e) => {
+    document.getElementById('txtRemove').addEventListener('keyup', async (e) => {
         if (e.keyCode === 13) {
-            remove();
+            await remove();
         }
     });
 
@@ -51,10 +53,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (validate) {
             validate.hideError();
             
-            if (await tree.search(value, tree.root) == 1) {
+            if (await tree.search(value, tree.root) !== undefined) {
                 await tree.sleep(2000);
-                tree.repaint();
+            } else {
+                alert('Número no existente en la estructura de datos');
             }
+            tree.repaint();
         }
     }
 

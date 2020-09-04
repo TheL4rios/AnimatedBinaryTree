@@ -19,3 +19,9 @@
     70% { transform: scale(1.2); }
     100% { transform: scale(1); } 
 }
+
+@keyframes delete {
+    10% { transform: scale(1); }
+    70% { transform: scale(1.2); }
+    100% { transform: scale(0); } 
+}

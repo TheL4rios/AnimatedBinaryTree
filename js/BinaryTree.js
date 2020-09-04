@@ -10,22 +10,22 @@ class BinaryTree {
 
     async search(number, root) {
         if (root === undefined) {
-            return -1;
+            return undefined;
         }
 
         if (number === root.value) {
             await this.changeColor(root, 'green');
-            return 1;
+            return root;
         } else if (number > root.value) {
             if (root.right === undefined) {
-                    return -1;
+                    return undefined;
             } else {
                 await this.changeColor(root, 'red');
                 return this.search(number, root.right);
             }
         } else {
             if (root.left === undefined) {
-                return -1;
+                return undefined;
             } else {
                 await this.changeColor(root, 'red');
                 return this.search(number, root.left);
@@ -60,11 +60,13 @@ class BinaryTree {
     repaint() {
         for (let i = 0; i <= this.id; i++) {
             const node = document.getElementById('node-' + i);
-            
-            if (darkTheme) {
-                node.style.backgroundColor = '#252525';
-            } else {
-                node.style.backgroundColor = 'white';
+
+            if (node) {
+                if (darkTheme) {
+                    node.style.backgroundColor = '#252525';
+                } else {
+                    node.style.backgroundColor = 'white';
+                }
             }
         }
     }
@@ -97,6 +99,139 @@ class BinaryTree {
         } else {
             this.addRecursively(number, root.left);
         }
+    }
+
+    async remove(number) {
+        const previousNode = await this.searchToDelete(number, this.root);
+        await this.sleep(1000);
+        this.repaint();
+
+        if (previousNode === -1) {
+            // delete the first node
+            await this.delete(this.root, 1);
+        } else if (previousNode === undefined) {
+            // there isn't this value in the data structure
+        } else {
+
+        }
+    }
+
+    async delete(node, position) {
+        if (node.left === undefined && node.right === undefined) {
+            await this.caseOne(node, position);
+        } else if (node.left === undefined && node.right !== undefined) {
+            await this.caseTwo(node, position);
+        }
+    }  
+
+    async caseOne(node, position) {
+        if (position === 1) {
+            // is the first
+            const container = document.getElementById('node-container-' + node.id);
+            const nodeToDelete = document.getElementById(node.id);
+            nodeToDelete.style.animation = 'delete 1s ease';
+            await this.sleep(1000);
+            document.getElementById('tree').removeChild(container);
+            this.root = undefined;
+        }
+    }
+
+    async caseTwo(node, position) {
+        if (position === 1) {
+            // is the first
+            const container = document.getElementById('node-container-' + node.id);
+            const nodeToDelete = document.getElementById(node.id);
+
+            const DeletedNodeCoord = nodeToDelete.getBoundingClientRect();
+
+            nodeToDelete.style.animation = 'delete 1s ease';
+            await this.sleep(1000);
+            document.getElementById('tree').removeChild(container);
+            this.root = JSON.parse(JSON.stringify(node.right));
+
+            await this.recalculateRoot(DeletedNodeCoord, this.root);
+        }
+    }
+
+    async recalculateRoot(coords, node) {
+        const arrow = document.getElementById('arrow-' + node.id);
+        arrow.style.animation = 'delete 1s ease';
+        document.getElementById('tree').removeChild(arrow);
+
+        const newNode = document.getElementById(node.id);
+        newNode.style.transitionDuration = '1s';
+        newNode.style.top = coords.top + 'px';
+        newNode.style.left = coords.left + 'px';
+        newNode.style.transitionDuration = '0s';
+
+        await this.recalculateNodes(node, undefined, this.CENTER);
+    }
+
+    async recalculateNodes(node, previous, position) {
+        if (node !== undefined) {
+            await this.move(node, previous, position);
+            await this.recalculateNodes(node.left, node, this.LEFT);
+            await this.recalculateNodes(node.right, node, this.RIGHT);
+        }
+    }
+
+    async move(node, previous, position) {
+        if (previous !== undefined) {
+            const previousId = previous.id;
+            //this.adjustNodes(node, position, document.getElementById(previous.id).getBoundingClientRect());
+            const previousCoords = document.getElementById(previousId).getBoundingClientRect();
+            const current = document.getElementById(node.id);
+
+            current.style.transitionDuration = '1s';
+            document.getElementById('arrow-' + node.id).style.transitionDuration = '1s';
+
+            current.style.top = (previousCoords.y + 112) + 'px';
+
+            if (position === this.RIGHT) {
+                current.style.left = (previousCoords.x + 112) + 'px';
+                new DrawArrow(previousCoords, 'arrow-' + node.id, this.RIGHT).adjustArrow();
+            } else if (position === this.LEFT) {
+                current.style.left = (previousCoords.x - 112) + 'px';
+                new DrawArrow(previousCoords, 'arrow-' + node.id, this.LEFT).adjustArrow();
+            }
+
+            // this.drawLine(current, previous, position);
+            this.adjustNodes(node, position, previousCoords);
+        }
+    }
+
+    async searchToDelete(number, root) {
+        if (root === undefined) {
+            return undefined;
+        }
+
+        let newRoot = root;
+        let previousRoot = -1;
+
+        while (newRoot !== undefined) {
+            if (number === newRoot.value) {
+                await this.changeColor(newRoot, 'green');
+                return previousRoot;
+            } else if (number > newRoot.value) {
+                if (newRoot.right === undefined) {
+                        return undefined;
+                } else {
+                    await this.changeColor(newRoot, 'red');
+                    previousRoot = JSON.parse(JSON.stringify(newRoot));
+                    newRoot = JSON.parse(JSON.stringify(newRoot.right));
+                }
+            } else {
+                if (newRoot.left === undefined) {
+                    return undefined;
+                } else {
+                    await this.changeColor(newRoot, 'red');
+                    previousRoot = JSON.parse(JSON.stringify(newRoot));
+                    newRoot = JSON.parse(JSON.stringify(newRoot.left));
+                }
+            }
+        }
+
+        return undefined;
     }
 
     add(number) {
@@ -137,7 +272,7 @@ class BinaryTree {
 
     adjustNodes(node, position, previous) {
         for(let i = 0; i <= this.id; i++) {
-            if (('node-' + i) != node.id) {
+            if (('node-' + i) != node.id && document.getElementById('node-' + i)) {
                 const currentNode = document.getElementById(node.id).getBoundingClientRect();
                 const otherNode = document.getElementById('node-' + i).getBoundingClientRect();
 
@@ -177,6 +312,7 @@ class BinaryTree {
         const div = document.createElement('div');
         const p = document.createElement('p');
         divContainer.className = 'node-container';
+        divContainer.id = 'node-container-' + node.id;
         div.className = 'node';
         div.id = node.id;
         p.append(node.value);
