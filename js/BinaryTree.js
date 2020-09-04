@@ -102,37 +102,55 @@ class BinaryTree {
     }
 
     async remove(number) {
-        const previousNode = await this.searchToDelete(number, this.root);
+        const nodes = await this.searchToDelete(number, this.root);
         await this.sleep(1000);
         this.repaint();
 
-        if (previousNode === -1) {
+        if (nodes[0] === -1) {
             // delete the first node
-            await this.delete(this.root, 1);
-        } else if (previousNode === undefined) {
+            await this.delete(nodes, 1);
+        } else if (nodes === undefined) {
             // there isn't this value in the data structure
+            alert('No es posible eliminar ese valor porque no existe');
         } else {
-
+            await this.delete(nodes, 2);
         }
     }
 
     async delete(node, position) {
-        if (node.left === undefined && node.right === undefined) {
+        if (node[1].left === undefined && node[1].right === undefined) {
             await this.caseOne(node, position);
-        } else if (node.left === undefined && node.right !== undefined) {
+        } else if (node[1].left === undefined && node[1].right !== undefined) {
             await this.caseTwo(node, position);
+        } else if (node[1].left !== undefined && node[1].right === undefined) {
+            await this.caseTwo(node, position);
+        } else {
+            await this.caseThree(node, position);
         }
     }  
 
     async caseOne(node, position) {
-        if (position === 1) {
-            // is the first
-            const container = document.getElementById('node-container-' + node.id);
-            const nodeToDelete = document.getElementById(node.id);
+        const container = document.getElementById('node-container-' + node[1].id);
+        const nodeToDelete = document.getElementById(node[1].id);
+
+        if (position === 1) { // is the first
             nodeToDelete.style.animation = 'delete 1s ease';
             await this.sleep(1000);
             document.getElementById('tree').removeChild(container);
             this.root = undefined;
+        } else { // is different to root
+            const arrow = document.getElementById('arrow-' + node[1].id);
+            arrow.style.animation = 'delete 1s ease';
+            nodeToDelete.style.animation = 'delete 1s ease';
+            await this.sleep(1000);
+            document.getElementById('tree').removeChild(container);
+            document.getElementById('tree').removeChild(arrow);
+            
+            if (node[1].value > node[0].value) {
+                node[0].right = undefined;
+            } else {
+                node[0].left = undefined;
+            }
         }
     }
 
@@ -211,22 +229,22 @@ class BinaryTree {
         while (newRoot !== undefined) {
             if (number === newRoot.value) {
                 await this.changeColor(newRoot, 'green');
-                return previousRoot;
+                return [previousRoot, newRoot];
             } else if (number > newRoot.value) {
                 if (newRoot.right === undefined) {
                         return undefined;
                 } else {
                     await this.changeColor(newRoot, 'red');
-                    previousRoot = JSON.parse(JSON.stringify(newRoot));
-                    newRoot = JSON.parse(JSON.stringify(newRoot.right));
+                    previousRoot = newRoot;
+                    newRoot = newRoot.right;
                 }
             } else {
                 if (newRoot.left === undefined) {
                     return undefined;
                 } else {
                     await this.changeColor(newRoot, 'red');
-                    previousRoot = JSON.parse(JSON.stringify(newRoot));
-                    newRoot = JSON.parse(JSON.stringify(newRoot.left));
+                    previousRoot = newRoot;
+                    newRoot = newRoot.left;
                 }
             }
         }
