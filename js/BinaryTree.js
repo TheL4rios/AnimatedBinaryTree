@@ -125,7 +125,7 @@ class BinaryTree {
         } else if (node[1].left !== undefined && node[1].right === undefined) {
             await this.caseTwo(node, position);
         } else {
-            await this.caseThree(node, position);
+            await this.caseThree(node);
         }
     }  
 
@@ -155,19 +155,86 @@ class BinaryTree {
     }
 
     async caseTwo(node, position) {
-        if (position === 1) {
-            // is the first
-            const container = document.getElementById('node-container-' + node.id);
-            const nodeToDelete = document.getElementById(node.id);
+        const container = document.getElementById('node-container-' + node[1].id);
+        const nodeToDelete = document.getElementById(node[1].id);
+        const DeletedNodeCoord = nodeToDelete.getBoundingClientRect();
+        nodeToDelete.style.animation = 'delete 1s ease';
+        await this.sleep(1000);
+        document.getElementById('tree').removeChild(container);
 
-            const DeletedNodeCoord = nodeToDelete.getBoundingClientRect();
-
-            nodeToDelete.style.animation = 'delete 1s ease';
-            await this.sleep(1000);
-            document.getElementById('tree').removeChild(container);
-            this.root = JSON.parse(JSON.stringify(node.right));
-
+        if (position === 1) { // is the first
+            if (node[1].right === undefined) {
+                this.root = node[1].left
+            } else {
+                this.root = node[1].right;
+            }
+            
             await this.recalculateRoot(DeletedNodeCoord, this.root);
+        } else {
+            let nodeToMove = undefined;
+
+            if (node[1].value > node[0].value) {
+                if (node[1].right === undefined) {
+                    node[0].right = node[1].left;
+                    nodeToMove = node[1].left;
+                } else {
+                    node[0].right = node[1].right;
+                    nodeToMove = node[1].right;
+                }
+            } else {
+                if (node[1].right === undefined) {
+                    node[0].left = node[1].left;
+                    nodeToMove = node[1].left;
+                } else {
+                    node[0].left = node[1].right;
+                    nodeToMove = node[1].right;
+                }
+            }
+
+            await this.recalculateRoot(DeletedNodeCoord, nodeToMove);
+        }
+    }
+
+    async caseThree(node) {
+        const predecessor = await this.getPredecessor(node[1].left, node[1]);
+        await this.sleep(1000);
+        this.repaint();
+
+        const nodeDeleted = document.getElementById(node[1].id);
+
+        nodeDeleted.style.animation = 'delete 1s ease';
+        const arrow = document.getElementById('arrow-' + predecessor.id);
+        arrow.style.animation = 'delete 1s ease';
+        this.CONTAINER.removeChild(arrow);
+
+        const nodeDeletedCoord = nodeDeleted.getBoundingClientRect();
+        const nodePredecessor = document.getElementById(predecessor.id);
+        nodePredecessor.style.transitionDuration = '1s';
+        nodePredecessor.style.left = nodeDeletedCoord.x + 'px';
+        nodePredecessor.style.top = nodeDeletedCoord.y + 'px';
+
+        this.CONTAINER.removeChild(document.getElementById('node-container-' + node[1].id));
+
+        const leftNode = node[1].left;
+        const rightNode = node[1].right;
+
+        node[1] = predecessor;
+        node[1].left = leftNode;
+        node[1].right = rightNode;
+    }
+
+    async getPredecessor(node, previousNode) {
+        const nodeSelected = document.getElementById(node.id);
+        nodeSelected.style.animation = 'select 1s ease';
+        await this.sleep(1000);
+
+        if (node.right === undefined) {
+            nodeSelected.style.backgroundColor = 'red';
+            previousNode.right = undefined;
+            return node;
+        } else {
+            nodeSelected.style.backgroundColor = 'green';
+            return this.getPredecessor(node.right, node);
         }
     }
 
