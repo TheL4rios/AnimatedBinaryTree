@@ -8,9 +8,9 @@ body {
 }
 
 .arrow-container .line {
-    border-color: black;
+    border-color: black !important;
 }
 
 .arrow-container .arrow {
-    border-left: 10px solid black;
+    border-left: 10px solid black !important;
 }

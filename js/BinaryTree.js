@@ -67,6 +67,8 @@ class BinaryTree {
                 } else {
                     node.style.backgroundColor = 'white';
                 }
+
+                node.style.animation = '';
             }
         }
     }
@@ -115,6 +117,8 @@ class BinaryTree {
         } else {
             await this.delete(nodes, 2);
         }
+
+        this.adjustNodes();
     }
 
     async delete(node, position) {
@@ -160,6 +164,7 @@ class BinaryTree {
         const DeletedNodeCoord = nodeToDelete.getBoundingClientRect();
         nodeToDelete.style.animation = 'delete 1s ease';
         await this.sleep(1000);
+        const arrow = document.getElementById('arrow-' + nodeToDelete.id);
         document.getElementById('tree').removeChild(container);
 
         if (position === 1) { // is the first
@@ -191,7 +196,7 @@ class BinaryTree {
                 }
             }
 
-            await this.recalculateRoot(DeletedNodeCoord, nodeToMove);
+            await this.recalculateRoot(DeletedNodeCoord, nodeToMove, arrow);
         }
     }
 
@@ -201,6 +206,7 @@ class BinaryTree {
         this.repaint();
 
         const nodeDeleted = document.getElementById(node[1].id);
+        const nodeArrowDeleted = document.getElementById('arrow-' + node[1].id);
 
         nodeDeleted.style.animation = 'delete 1s ease';
         const arrow = document.getElementById('arrow-' + predecessor.id);
@@ -212,6 +218,8 @@ class BinaryTree {
         nodePredecessor.style.transitionDuration = '1s';
         nodePredecessor.style.left = nodeDeletedCoord.x + 'px';
         nodePredecessor.style.top = nodeDeletedCoord.y + 'px';
+
+        nodeArrowDeleted.dataset.to = nodePredecessor.id;
 
         this.CONTAINER.removeChild(document.getElementById('node-container-' + node[1].id));
 
@@ -238,16 +246,18 @@ class BinaryTree {
         }
     }
 
-    async recalculateRoot(coords, node) {
+    async recalculateRoot(coords, node, arrowFromDeletedNode) {
         const arrow = document.getElementById('arrow-' + node.id);
         arrow.style.animation = 'delete 1s ease';
         document.getElementById('tree').removeChild(arrow);
 
-        const newNode = document.getElementById(node.id);
-        newNode.style.transitionDuration = '1s';
-        newNode.style.top = coords.top + 'px';
-        newNode.style.left = coords.left + 'px';
-        newNode.style.transitionDuration = '0s';
+        const nodeToMove = document.getElementById(node.id);
+        nodeToMove.style.transitionDuration = '1s';
+        nodeToMove.style.top = coords.top + 'px';
+        nodeToMove.style.left = coords.left + 'px';
+        nodeToMove.style.transitionDuration = '0s';
+
+        arrowFromDeletedNode.dataset.to = node.id;
 
         await this.recalculateNodes(node, undefined, this.CENTER);
     }
@@ -263,7 +273,7 @@ class BinaryTree {
     async move(node, previous, position) {
         if (previous !== undefined) {
             const previousId = previous.id;
-            //this.adjustNodes(node, position, document.getElementById(previous.id).getBoundingClientRect());
+            // this.adjustNodes(node, position, document.getElementById(previous.id).getBoundingClientRect());
             const previousCoords = document.getElementById(previousId).getBoundingClientRect();
             const current = document.getElementById(node.id);
 
@@ -281,7 +291,7 @@ class BinaryTree {
             }
 
             // this.drawLine(current, previous, position);
-            this.adjustNodes(node, position, previousCoords);
+            this.adjustNodes(node);
         }
     }
 
@@ -348,48 +358,65 @@ class BinaryTree {
                 current.style.left = (previous.x - 112) + 'px';
             }
 
-            this.drawLine(current, previous, position);
-            this.adjustNodes(node, position, previous);
+            this.adjustNodes();
+            this.drawLine(current.id, previousId);
         }
 
         document.getElementById(node.id).style.animation = 'appear 1s ease';
     }
 
-    adjustNodes(node, position, previous) {
-        for(let i = 0; i <= this.id; i++) {
-            if (('node-' + i) != node.id && document.getElementById('node-' + i)) {
-                const currentNode = document.getElementById(node.id).getBoundingClientRect();
-                const otherNode = document.getElementById('node-' + i).getBoundingClientRect();
-
-                if ((currentNode.x == otherNode.x) && (currentNode.y == otherNode.y)) {
-                    const current = document.getElementById(node.id);
-                    const arrow = document.getElementById('arrow-' + node.id);
-                    const line = document.getElementById('line-arrow-' + node.id);
-                    const lineArrow = document.getElementById('arrow-arrow-' + node.id);
-
-                    if (position === this.RIGHT) {
-                        current.style.left = (previous.x + 50) + 'px';
-                        arrow.style.transform = 'rotateZ(20deg)';
-                        arrow.style.top = (previous.bottom - 2) + 'px';
-                        arrow.style.left = (previous.right - 25) + 'px';
-                    } else {
-                        arrow.style.transform = 'rotateY(180deg)';
-                        arrow.style.transform = 'rotateZ(70deg)';
-                        current.style.left = (previous.x - 50) + 'px';
-                        arrow.style.top = (previous.bottom + 10) + 'px';
-                        arrow.style.left = (previous.left - 50) + 'px';
-                    }
-
-                    line.style.width = '60px';
-                    lineArrow.style.top = '52px';
-                    lineArrow.style.left = '37px';
-                }
-            }
-        }
+    adjustNodes() {
+        this.recalculatePositions(this.root, undefined, this.CENTER, window.screen.width / 2 - 50);
+        recalculateAll();
     }
 
-    drawLine(current, previous, position) {
-        new DrawArrow(previous, 'arrow-' + current.id, position).draw();
+    recalculatePositions(node, previousNode, position, x) {
+        if(node === undefined) return;
+
+        let width = document.getElementById(node.id).getBoundingClientRect().width;
+        const extra = (this.completeNodes(node) + this.getHeight(node)) * width / 2;
+        let left = x - extra - width;
+        let right = x + extra + width;
+        
+        if (previousNode) {
+            const previous = document.getElementById(previousNode.id).getBoundingClientRect();
+            const current = document.getElementById(node.id);
+            const r = width / 2;
+
+            current.style.top = (previous.y + width + 50) + 'px';
+
+            if (position === this.RIGHT) {
+                current.style.left = (x + r) + 'px';
+            } else if (position === this.LEFT) {
+                current.style.left = (x - r) + 'px';
+            }
+        } else {
+            const position = document.getElementById(node.id).getBoundingClientRect();
+            document.getElementById(node.id).style.left = (window.screen.width / 2) - (position.width / 2) + 'px';
+        }
+
+        this.recalculatePositions(node.left, node, this.LEFT, left - extra + width * 1.5);
+        this.recalculatePositions(node.right, node, this.RIGHT, right + extra - width * 1.5);
+    }
+
+    completeNodes(node) {
+        if (node === undefined) return 0;
+        if (node.left !== undefined && node.right !== undefined) {
+            return this.completeNodes(node.left) + this.completeNodes(node.right) + 1;
+        }
+        return this.completeNodes(node.left) + this.completeNodes(node.right);
+    }
+
+    getHeight(node) {
+        if (node === undefined) return 0;
+        return 1 + Math.max(this.getHeight(node.left), this.getHeight(node.right));
+    }
+
+    drawLine(current, previous) {
+        createArrow('arrow-' + current, previous, current, this.CONTAINER);
+
+        const element = document.getElementById('arrow-' + current);
+        draw(element.dataset.from, element.dataset.to, element, element.dataset.color);
     }
 
     createNode(node) {

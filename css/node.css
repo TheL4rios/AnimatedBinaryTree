@@ -1,5 +1,6 @@
 #tree {
     margin-top: 20px;
+    overflow:auto auto;
 }
 
 #tree .node-container .node {
